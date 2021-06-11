@@ -1,0 +1,25 @@
+{
+  "name": "cloudversity_apis",
+  "version": "1.0.0",
+  "description": "backend for cloudversity",
+  "main": "main.js",
+  "scripts": {
+    "dev": "nodemon main.js",
+    "start": "node main.js"
+  },
+  "author": "Akshay",
+  "license": "ISC",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.26.0",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "datauri": "^3.0.0",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.12.12",
+    "multer": "^1.4.2"
+  }
+}
