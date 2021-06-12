@@ -180,7 +180,7 @@ Router.post("/enroll/:courseId", auth, async (req, res) => {
 });
 
 // ------------------- PATCH: Course details Update ---------------//
-Router.patch('/updatecourse/:courseId', auth, async (req, res) => {
+Router.patch("/updatecourse/:courseId", auth, async (req, res) => {
 
     try {
 
