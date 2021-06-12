@@ -28,6 +28,9 @@ const StudentSchema = mongoose.Schema({
         type: String,
         default: null
     },
+    profileInfo: {
+        type: {}
+    },
     enrolledCourses: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: "course",

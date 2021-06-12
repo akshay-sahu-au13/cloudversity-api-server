@@ -28,6 +28,9 @@ const TutorSchema = mongoose.Schema({
         type: String,
         default: null
     },
+    profileInfo: {
+        type: {}
+    },
     createdCourses: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: "course",

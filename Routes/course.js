@@ -1,12 +1,11 @@
 const express = require("express");
 const Router = express.Router();
 const auth = require("../Auth/auth");
-require("dotenv").config();
-const path = require("path");
 const Course = require("../Model/course");
 const Video = require("../Model/video");
 const Tutor = require("../Model/tutor");
 const Student = require("../Model/student");
+const path = require("path");
 const multer = require("multer");
 const bufferConversion = require("../Utils/bufferConversion");
 const { imageUpload, videoUpload } = require("../Utils/multer");
