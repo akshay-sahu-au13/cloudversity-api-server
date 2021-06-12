@@ -29,7 +29,20 @@ const StudentSchema = mongoose.Schema({
         default: null
     },
     profileInfo: {
-        type: {}
+        contactNo: {
+            type: Number,
+        },
+        aboutMe: {
+            type: String,
+            default: "Tell us about yourself"
+        },
+        occupation: {
+            type: String,
+        },
+        bankAccount: {
+            type: Number,
+            default: null
+        },
     },
     enrolledCourses: {
         type: [mongoose.Schema.Types.ObjectId],

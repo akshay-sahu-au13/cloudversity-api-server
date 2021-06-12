@@ -9,7 +9,7 @@ const studentRoutes = require("./Routes/student");
 const tutorRoutes = require("./Routes/tutor");
 const courseRoutes = require("./Routes/course");
 const reviewRoutes = require("./Routes/review");
-const profileRoutes = required("./")
+const profileRoutes = require("./Routes/profile");
 const app = express();
 
 //-------- Connecting to DB --------- //

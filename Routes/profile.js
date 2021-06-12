@@ -11,22 +11,19 @@ const { cloudinary } = require("../Utils/clodinary");
 Router.patch("/updateprofile/:id", auth, async (req, res) => {
     
     try {
-        const newProfile = new Profile ({ 
-            ...req.body
-        });
-        await newProfile.save();
+        
         const student = await Student.findById({_id:req.params.id});
         const tutor = await Tutor.findById({ _id: req.params.id });
 
         if (student) {
-            student.profileInfo = newProfile ;
+            student.profileInfo = {...req.body} ;
             await student.save()
         } else {
-            tutor.profileInfo = newProfile;
+            tutor.profileInfo = {...req.body};
             await tutor.save();
         }
 
-        res.status(200).send({message: "Profile updated", profileInfo: newProfile});
+        res.status(200).send({message: "Profile updated", profileInfo: req.body});
 
     } catch (error) {
         console.log("Error while updating profile", error);
