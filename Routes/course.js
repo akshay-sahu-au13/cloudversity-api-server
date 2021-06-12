@@ -78,7 +78,8 @@ Router.get("/allcourses", async (req, res) => {
     try {
         const courseData = await Course.find()
             .populate("videos", ["videoLink", "title", "videoLength"])
-            .populate("reviews", ["reviewBody", "rating"])   // chaining populate to get multiple fields populated
+            .populate("reviews", ["reviewBody", "rating"])
+            .populate("authorName", ["firstName", "lastName", "createdCourses"])   // chaining populate to get multiple fields populated
             .exec();
 
         res.send({ message: "Fetched successfully", data: courseData });
