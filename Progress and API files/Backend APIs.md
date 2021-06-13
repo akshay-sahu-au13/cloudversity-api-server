@@ -23,6 +23,7 @@
 **To Enroll to a course** ==> POST: "/enroll/:courseId"
 **To Update a course** ==> PATCH: "/updatecourse/:courseId"
 **To update thumbnail** ==> PATCH: "/updatethumbnail/:courseId"
+**To delete a video** ==> DELETE: "/deletevideo/:videoId"
 
 ## Reviews
 

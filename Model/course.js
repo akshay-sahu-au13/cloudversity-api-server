@@ -36,7 +36,7 @@ const courseSchema = new mongoose.Schema ({
     },
     total_subscriptions: {
         type: Number,
-        defualt: 0
+        default: 0
     },
     course_duration: {
         type: Number,
@@ -63,6 +63,11 @@ const courseSchema = new mongoose.Schema ({
         default: null
     }
 
+});
+
+courseSchema.pre('validate', function (next) {
+    this.total_subscriptions = this.enrolledStudents.length
+    next(); 
 });
 
 module.exports = mongoose.model("course", courseSchema);
