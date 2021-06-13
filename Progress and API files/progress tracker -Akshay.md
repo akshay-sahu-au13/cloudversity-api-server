@@ -68,3 +68,10 @@
 Dependencies to install: axios, jwt-decode
 
 ## Features and modifications (12th and 13th June)
+
+- Added patch and delete routes for editing and deleting a review
+- Added route to get all the reviews for a particular course
+- Added a route to delete a video (Cloudinary delete is implemeted as well)
+- Added a pre function to calculate the total subscriptions of a course
+- Added logic to calculate the course ratings inside pre function
+- Updated the deployed link with latest changes

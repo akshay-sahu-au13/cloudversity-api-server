@@ -119,7 +119,7 @@ Router.post("/uploadvideo/:courseId", auth, videoUpload.single("videoLink"), asy
 
         video.videoLength = videoLength;
         video.videoLink = uploadedVideo.secure_url;
-        video.publicId = uploadedVideo.public_id;   // NEW: added public Id to video Schema
+        video.publicId = uploadedVideo.public_id.split("/")[1];   // NEW: added public Id to video Schema
 
         await video.save();
 
