@@ -11,7 +11,7 @@ const Review = require("../Model/review");
 Router.post("/addreview/:courseId", auth, async(req, res) => {
     try {
         
-        const course = await Course.findById({_id: req.params.courseId});
+        const course = await Course.findById({_id: req.params.courseId}).exec();
         const student = await Student.findById({_id: req.user.id});
         const newReview = new Review({
             ...req.body

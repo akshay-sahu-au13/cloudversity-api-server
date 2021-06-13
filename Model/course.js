@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Review = require("./review");
 
 const courseSchema = new mongoose.Schema ({
     courseName: {
@@ -65,8 +66,17 @@ const courseSchema = new mongoose.Schema ({
 
 });
 
-courseSchema.pre('validate', function (next) {
+courseSchema.pre('validate', async function (next) {
     this.total_subscriptions = this.enrolledStudents.length
+
+    // console.log("Reviews from courseSchema",this.reviews)
+    const reviews = await Review.find();
+    Average_rating = reviews.reduce((sum, review) => {
+        
+        return sum + review.rating;
+    }, 0)/reviews.length
+    this.rating = Average_rating.toFixed(2);
+
     next(); 
 });
 
