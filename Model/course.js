@@ -69,10 +69,10 @@ const courseSchema = new mongoose.Schema ({
 courseSchema.pre('validate', async function (next) {
     this.total_subscriptions = this.enrolledStudents.length
 
-    // console.log("Reviews from courseSchema",this.reviews)
     const reviews = await Review.find();
+    
+    // ---- Function to calculate the average rating --- //
     Average_rating = reviews.reduce((sum, review) => {
-        
         return sum + review.rating;
     }, 0)/reviews.length
     this.rating = Average_rating.toFixed(2);
