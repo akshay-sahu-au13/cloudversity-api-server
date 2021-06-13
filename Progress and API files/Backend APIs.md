@@ -27,8 +27,8 @@
 ## Reviews
 
 **To add a review** ==> POST: "/addreview/:courseId"
-**To update a review** ==> PATCH: "/updatereview/:courseId"
-**To delete a review** ==> PATCH: "/deletereview/:courseId"
+**To update a review** ==> PATCH: "/editreview/:reviewId"
+**To delete a review** ==> PATCH: "/deletereview/:reviewId"
 
 ## Profile
 
