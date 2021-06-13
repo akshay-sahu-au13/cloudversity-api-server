@@ -10,6 +10,7 @@ const multer = require("multer");
 const bufferConversion = require("../Utils/bufferConversion");
 const { imageUpload, videoUpload } = require("../Utils/multer");
 const { cloudinary } = require("../Utils/clodinary");
+const { findOneAndDelete } = require("../Model/tutor");
 
 // ------ Thumbnail upload -----temporaily replaced by multe in Utils folder-- //
 let storage = multer.diskStorage({
@@ -76,7 +77,7 @@ Router.post("/addcourse", auth, imageUpload.single("thumbnail"), async (req, res
 Router.get("/allcourses", async (req, res) => {
     try {
         const courseData = await Course.find()
-            .populate("videos", ["videoLink", "title", "videoLength"])
+            .populate("videos", ["videoLink", "title", "videoLength", "publicId"])
             .populate("reviews", ["reviewBody", "rating"])
             .populate("authorName", ["firstName", "lastName", "createdCourses"])   // chaining populate to get multiple fields populated
             .exec();
@@ -220,6 +221,23 @@ Router.patch("/updatethumbnail/:courseId", auth, imageUpload.single('thumbnail')
     } catch (error) {
         console.log("Error occurred while updating thumbnail...", error);
         res.status(500).send({ message: "Couldn't update the thumbnail", error: error.message });
+    }
+});
+
+Router.delete("/deletevideo/:videoId", auth, async (req, res) => {
+    try {
+        
+        const videoToDelete = await Video.findById({_id: req.params.videoId});
+
+        const deletedVideo = await cloudinary.uploader.destroy(videoToDelete.publicId, { resource_type: 'video', upload_preset: "cloudversity-dev"});
+
+        const deleteVideo = await Video.findOneAndDelete({_id: req.params.videoId});
+
+        res.status(200).send({message: "Sucess! The video has been deleted"});
+
+    } catch (error) {
+        console.log("Error occurred while deleting the video...", error);
+        res.status(500).send({ message: "Couldn't delete the video, try again", error: error.message });
     }
 });
 
