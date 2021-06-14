@@ -181,6 +181,11 @@ Route.post("/latestcourse/:courseId", auth, (req, res) => {
 
         const student = await Student.findById({ _id: req.user.id });
 
+        const indexOfCourse = student.lastViewedCourse.indexOf(lastViewedCourse._id);
+        if (indexOfCourse >= 0) {
+            student.lastViewedCourse.splice(indexOfCourse, 1);
+        };
+
         student.lastViewedCourse.push(lastViewedCourse._id);
 
         await student.save();
