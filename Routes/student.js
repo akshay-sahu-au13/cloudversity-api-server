@@ -9,9 +9,7 @@ const Course = require('../Model/course');
 const Tutor = require('../Model/tutor');
 
 
-
-
-// ---------- Student Signup Route ---------- //
+// ----------------- POST: Student Signup Route ------------------ //
 Router.post('/signup', async (req, res) => {
     try {
         const studentData = req.body;
@@ -40,7 +38,7 @@ Router.post('/signup', async (req, res) => {
     }
 });
 
-// ---------- Student Login Route ---------- //
+// ------------------ POST: Student Login Route ------------------- //
 
 Router.post('/login', async (req, res) => {
     try {
@@ -74,6 +72,7 @@ Router.post('/login', async (req, res) => {
     }
 });
 
+// ----------------- GET: Route to get list of all the students ------------------- //
 Router.get("/allstudents", async (req, res) => {
     try {
         const students = await Student.find();
@@ -90,6 +89,7 @@ Router.get("/allstudents", async (req, res) => {
     }
 });
 
+// ----------------- POST: Route to Add a course to Wishlist ------------------- //
 Router.post("/addtowishlist/:courseId", auth, async (req, res) => {
     try {
         
@@ -111,6 +111,7 @@ Router.post("/addtowishlist/:courseId", auth, async (req, res) => {
     }
 });
 
+// ----------------- DELETE: Route to remove a course from Wishlist ------------------- //
 Router.delete("/removefromwishlist/:courseId", auth, async (req, res) => {
     try {
 
@@ -138,6 +139,7 @@ Router.delete("/removefromwishlist/:courseId", auth, async (req, res) => {
     }
 });
 
+// ----------------- POST: Route to add a course to the Cart ------------------- //
 Router.post("/addtocart/:courseId", auth, async (req, res) => {
     try {
         
@@ -155,6 +157,7 @@ Router.post("/addtocart/:courseId", auth, async (req, res) => {
     }
 });
 
+// ----------------- PATCH: Route to remove a course from Cart ------------------- //
 Router.patch("/removefromcart/:courseId", auth, async(req, res) => {
     try {
 
@@ -174,6 +177,7 @@ Router.patch("/removefromcart/:courseId", auth, async(req, res) => {
     }
 });
 
+// ----------------- POST: Route to update the last visited course ------------------- //
 Router.post("/latestcourse/:courseId", auth, async(req, res) => {
     try {
         
