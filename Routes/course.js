@@ -69,52 +69,6 @@ Router.get("/allcourses", async (req, res) => {
     }
 });
 
-// ------------------- POST: Upload Videos ---------------//
-Router.post("/uploadvideo/:courseId", auth, videoUpload.single("videoLink"), async (req, res) => {
-
-    try {
-        // console.log("Course Id: ", req.params.courseId, "User: ", req.user)
-        const video = new Video({
-            ...req.body
-        });
-
-        const convertedBuffer = await bufferConversion(req.file.originalname, req.file.buffer);
-        // console.log("req.file.buffer: ",req.file.buffer);
-        // console.log("convertedBuffer: ", convertedBuffer);  Don't ever uncomment this :-P
-
-        const uploadedVideo = await cloudinary.uploader.upload(convertedBuffer, { resource_type: "video", upload_preset: "cloudversity-dev", });
-
-        console.log("Uploaded video object: ", uploadedVideo)
-        video.courseId = req.params.courseId;
-        video.authorId = req.user.id;
-
-        if (uploadedVideo.duration > 60) {
-            videoLength = (uploadedVideo.duration / 60).toFixed(2);
-        } else {
-            videoLength = uploadedVideo.duration
-        };
-        console.log("Video Length : ", videoLength);
-
-        video.videoLength = videoLength;
-        video.videoLink = uploadedVideo.secure_url;
-        video.publicId = uploadedVideo.public_id.split("/")[1];   // NEW: added public Id to video Schema
-
-        await video.save();
-
-        const course = await Course.findById({ _id: req.params.courseId });
-        course.videos.push(video._id);
-
-        await course.save();
-
-        res.status(201).send({ message: "Video uploaded successfully", videoDetails: video })
-
-    } catch (error) {
-
-        console.log("Error occurred while uploading...", error);
-        res.status(500).send({ message: "Couldn't upload the video", error: error.message });
-
-    }
-});
 
 // ------------------- GET: get Course by courseId -----------------//
 Router.get("/course/:courseId", async (req, res) => {
@@ -142,13 +96,15 @@ Router.post("/enroll/:courseId", auth, async (req, res) => {
         const course = await Course.findById({ _id: req.params.courseId });
         const student = await Student.findById({ _id: req.user.id });
 
-        course.enrolledStudents.push(req.user.id);
-        student.enrolledCourses.push(req.params.courseId);
+        if (!course.enrolledStudents.includes(req.user.id)) {
 
-        await course.save();
-        await student.save();
-
-        res.status(200).send({ message: "New course enrolled successfully", enrolledCourses: student.enrolledCourses });
+            course.enrolledStudents.push(req.user.id);
+            student.enrolledCourses.push(req.params.courseId);
+            await course.save();
+            await student.save();
+            res.status(200).send({ message: "New course enrolled successfully", enrolledCourses: student.enrolledCourses });
+        }
+        res.status(200).send({message: "Student already enrolled to this course"});
 
     } catch (error) {
         console.log("Error occurred while enrolling...", error);
@@ -199,6 +155,62 @@ Router.patch("/updatethumbnail/:courseId", auth, imageUpload.single('thumbnail')
     } catch (error) {
         console.log("Error occurred while updating thumbnail...", error);
         res.status(500).send({ message: "Couldn't update the thumbnail", error: error.message });
+    }
+});
+
+// ------------------- POST: Upload Videos ---------------//
+Router.post("/uploadvideo/:courseId", auth, videoUpload.single("videoLink"), async (req, res) => {
+
+    try {
+        // console.log("Course Id: ", req.params.courseId, "User: ", req.user)
+        const video = new Video({
+            ...req.body
+        });
+
+        const convertedBuffer = await bufferConversion(req.file.originalname, req.file.buffer);
+        // console.log("req.file.buffer: ",req.file.buffer);
+        // console.log("convertedBuffer: ", convertedBuffer);  Don't ever uncomment this :-P
+
+        const uploadedVideo = await cloudinary.uploader.upload(convertedBuffer, { resource_type: "video", upload_preset: "cloudversity-dev", });
+
+        console.log("Uploaded video object: ", uploadedVideo)
+        video.courseId = req.params.courseId;
+        video.authorId = req.user.id;
+
+        // if (uploadedVideo.duration > 60) {
+        //     videoLength = (uploadedVideo.duration / 60).toFixed(2);
+        // } else {
+        //     videoLength = uploadedVideo.duration
+        // };
+
+        videoLength = (uploadedVideo.duration / 60).toFixed(3);
+
+        console.log("Video Length : ", videoLength);
+
+        video.videoLength = videoLength;
+        video.videoLink = uploadedVideo.secure_url;
+        video.publicId = uploadedVideo.public_id.split("/")[1];   // NEW: added public Id to video Schema
+
+        await video.save();
+
+        const course = await Course.findById({ _id: req.params.courseId }).populate("videos", ["videoLength"]);
+        
+        // ----- Logic to calculate the course duration ----- //
+        const courseDuration = course.videos.reduce((sum, video) => {
+            return sum + video.videoLength;
+        }, 0) + parseFloat(videoLength);
+
+        course.courseDuration = courseDuration.toFixed(3);
+        course.videos.push(video._id);
+        await course.save();
+
+        res.status(201).send({ message: "Video uploaded successfully", videoDetails: video })
+
+    } catch (error) {
+
+        console.log("Error occurred while uploading...", error);
+        res.status(500).send({ message: "Couldn't upload the video", error: error.message });
+
     }
 });
 
