@@ -8,6 +8,7 @@ const Student = require("../Model/student");
 const Review = require("../Model/review");
 
 
+// ------------------- POST: Route to add a review to the course ------------------- //
 Router.post("/addreview/:courseId", auth, async(req, res) => {
     try {
         
@@ -44,6 +45,7 @@ Router.post("/addreview/:courseId", auth, async(req, res) => {
     };
 });
 
+// ------------------- GET: Route to get all the reviews of the course ------------------- //
 Router.get("/allreviews/:courseId", async (req, res) => {
     try {
         const reviews = await Review.find({courseId: req.params.courseId});
@@ -57,6 +59,7 @@ Router.get("/allreviews/:courseId", async (req, res) => {
     });
 }});
 
+// ------------------- PATCH: Route to edit the review of a course ------------------- //
 Router.patch("/editreview/:reviewId", auth, async (req, res) => {
     try {
 
@@ -77,10 +80,12 @@ Router.patch("/editreview/:reviewId", auth, async (req, res) => {
     };
 });
 
+// ------------------- DELETE: Route to Delete the review of a course ------------------- //
 Router.delete("/deletereview/:reviewId", auth, async (req, res) => {
     try {
 
         const review = await Review.findOneAndDelete({_id:req.params.reviewId});
+
         res.status(200).send({message: "Review deleted successfully"});
 
         
@@ -89,7 +94,6 @@ Router.delete("/deletereview/:reviewId", auth, async (req, res) => {
         res.status(500).send({ message: "Error while deleting review", error: error.message });
     };
 });
-
 
 
 

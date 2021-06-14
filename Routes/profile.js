@@ -8,6 +8,8 @@ const bufferConversion = require("../Utils/bufferConversion");
 const { imageUpload } = require("../Utils/multer");
 const { cloudinary } = require("../Utils/clodinary");
 
+
+// ------------------- PATCH: Route to update the profile ------------------- //
 Router.patch("/updateprofile/:id", auth, async (req, res) => {
     
     try {
@@ -31,6 +33,7 @@ Router.patch("/updateprofile/:id", auth, async (req, res) => {
     }
 });
 
+// ------------------- PATCH: Route to update the dp ------------------- //
 Router.patch("/updatedp/:id", auth, imageUpload.single("profileImg"), async (req, res) => {
     try {
         const student = await Student.findById({ _id: req.params.id });

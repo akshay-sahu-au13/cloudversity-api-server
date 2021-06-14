@@ -202,6 +202,7 @@ Router.patch("/updatethumbnail/:courseId", auth, imageUpload.single('thumbnail')
     }
 });
 
+// ------------------- DELETE: Route to Delete a Video ------------------- //
 Router.delete("/deletevideo/:videoId", auth, async (req, res) => {
     try {
         
