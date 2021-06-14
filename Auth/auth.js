@@ -27,6 +27,7 @@ try {
         return res.send({ message: "Invalid Auth token", error: "Unauthorised entry"})
     }
     req.user = decoded;
+    console.log("Authenticated!")
     next();
 } catch (error) {
     console.log("Auth token not found",error);
