@@ -11,7 +11,7 @@ const Review = require("../Model/review");
 Router.post("/addreview/:courseId", auth, async(req, res) => {
     try {
         
-        const course = await Course.findById({_id: req.params.courseId}).exec();
+        const course = await Course.findById({_id: req.params.courseId}).populate("reviews");
         const student = await Student.findById({_id: req.user.id});
         const newReview = new Review({
             ...req.body
@@ -23,6 +23,14 @@ Router.post("/addreview/:courseId", auth, async(req, res) => {
         await newReview.save();
 
         course.reviews.push(newReview._id);
+        const averageRating = course.reviews.reduce((sum, review) => {
+            return sum + review.rating
+        }, 0);
+        finalRating = (averageRating + req.body.rating) / course.reviews.length;
+        // console.log("Reviews length: ", course.reviews, course.reviews.length)
+        // console.log("Average Rating: ", averageRating);
+
+        course.rating = finalRating.toFixed(2);
         student.yourReviews.push(newReview._id);
 
         await course.save();

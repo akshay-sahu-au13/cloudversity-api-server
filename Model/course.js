@@ -41,7 +41,6 @@ const courseSchema = new mongoose.Schema ({
     },
     course_duration: {
         type: Number,
-        required: true
     },
     level: {
         type: String,
@@ -74,13 +73,13 @@ const courseSchema = new mongoose.Schema ({
 courseSchema.pre('validate', async function (next) {
     this.total_subscriptions = this.enrolledStudents.length
 
-    const reviews = await Review.find();
+    // const reviews = await Review.find();
     
-    // ---- Function to calculate the average rating --- //
-    Average_rating = reviews.reduce((sum, review) => {
-        return sum + review.rating;
-    }, 0)/reviews.length
-    this.rating = Average_rating.toFixed(2);
+    // // ---- Function to calculate the average rating --- //
+    // Average_rating = reviews.reduce((sum, review) => {
+    //     return sum + review.rating;
+    // }, 0)/reviews.length
+    // this.rating = Average_rating.toFixed(2);
 
     next(); 
 });
