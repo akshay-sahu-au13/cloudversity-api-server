@@ -35,11 +35,11 @@ const courseSchema = new mongoose.Schema ({
         type: Number,
         default: 0
     },
-    total_subscriptions: {
+    totalSubscriptions: {
         type: Number,
         default: 0
     },
-    course_duration: {
+    courseDuration: {
         type: Number,
     },
     level: {
@@ -71,7 +71,7 @@ const courseSchema = new mongoose.Schema ({
 });
 
 courseSchema.pre('validate', async function (next) {
-    this.total_subscriptions = this.enrolledStudents.length;
+    this.totalSubscriptions = this.enrolledStudents.length;
     next(); 
 });
 

@@ -75,3 +75,21 @@ Dependencies to install: axios, jwt-decode
 - Added a pre function to calculate the total subscriptions of a course
 - Added logic to calculate the course ratings inside pre function
 - Updated the deployed link with latest changes
+
+## Features and modifications (14th June):
+
+- Added wishlist to studentSchema
+- Added lastViewed course to student schema
+- Added wishlisted to courseSchema
+- Added cart to student Schema
+- Added route to get list of all the students
+- Added route to get list of all the tutors
+- Added route to Add a course to wishlist
+- Added route to remove the course from wishlist
+- Added route to add a course to cart
+- Added a route to remove a course from cart
+- Added route for updating the last viewed course
+- Added logic for verifying the token sent via headers in auth middlewre
+- Changed the logic for calculating rating as the previous one was incorrect
+- Added CORS related middleware to eliminate cross origin errors
+- Modified the addcourse route to enable thumbnail uploading
