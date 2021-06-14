@@ -10,48 +10,24 @@ const multer = require("multer");
 const bufferConversion = require("../Utils/bufferConversion");
 const { imageUpload, videoUpload } = require("../Utils/multer");
 const { cloudinary } = require("../Utils/clodinary");
-const { findOneAndDelete } = require("../Model/tutor");
 
-// ------ Thumbnail upload -----temporaily replaced by multe in Utils folder-- //
-let storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, "./public/uploads")
-    },
-    filename: function (req, file, cb) {
-        const suffix = Date.now() + "-" + Math.round(Math.random() * 1E9)
-        cb(null, file.fieldname + "-" + suffix + path.extname(file.originalname));
-    }
-})
-
-const imageFilter = function (req, file, cb) {
-    // Accept images only
-    if (!file.originalname.match(/\.(jpg|JPG|jpeg|JPEG|png|PNG|gif|GIF)$/)) {
-        req.fileValidationError = "Only image files are allowed!";
-        return cb(new Error("Only image files are allowed!"), false);
-    }
-    cb(null, true);
-};
-
-let thumbnail = multer({ storage: storage, limits: { fileSize: 1 * 1024 * 1024 }, fileFilter: imageFilter });
 
 //-------------- COURSE AND VIDEO ROUTES BELOW ---------------- //
 
 // ------------------- POST: Add a New Course ------------------//
-Router.post("/addcourse", auth, imageUpload.single("thumbnail"), async (req, res) => {
+Router.post("/addcourse", auth, async (req, res) => {
 
     try {
 
         console.log("User details provided during AUTH: ", req.user);
-        // res.header("Access-Control-Allow-Origin", "true");
-        console.log("Req.body: ", req.body)
-        console.log("File input from form: ", req.file)
+ 
         const course_data = new Course({
             ...req.body
         });
 
-        const convertedBuffer = await bufferConversion(req.file.originalname, req.file.buffer);
+        // const convertedBuffer = await bufferConversion(req.file.originalname, req.file.buffer);
 
-        const uploadedImage = await cloudinary.uploader.upload(convertedBuffer, { resource_type: "image", upload_preset: "cloudversity-dev", });
+        const uploadedImage = await cloudinary.uploader.upload(req.body.thumbnail, { upload_preset: "cloudversity-dev", });
 
         console.log("Cloudversity response: ", uploadedImage);
 
@@ -70,7 +46,7 @@ Router.post("/addcourse", auth, imageUpload.single("thumbnail"), async (req, res
     } catch (error) {
         console.log("Error while creating course: ", error);
 
-        res.status.send({ message: "Couldn't create the course", error: error.message });
+        res.send({ message: "Couldn't create the course", error: error.message });
     }
 
 });
