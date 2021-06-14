@@ -63,7 +63,7 @@ const courseSchema = new mongoose.Schema ({
         ref: "student",
         default: null
     },
-    wishlisted: {
+    wishlistedBy: {
         type: [mongoose.Schema.Types.ObjectId],
         ref: "student",
         default: null

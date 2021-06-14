@@ -9,6 +9,8 @@
 **Student Login** ==> POST: "/stu/login"
 **Student Signup** ==> POST: "/stu/signup"
 **Get all students** ==> GET: "/stu/allstudents"
+**Add to wishlist** ==> POST: "/addtowishlist/:courseId"
+**Remove from wishlist** ==> DELETE: "/removefromwishlist/:courseId"
 
 ## Tutor
 

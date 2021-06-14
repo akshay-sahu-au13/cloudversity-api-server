@@ -3,7 +3,12 @@ const Router = express.Router();
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const bcrypt = require('bcryptjs');
+const auth = require("../Auth/auth");
 const Student = require('../Model/student');
+const Course = require('../Model/course');
+const Tutor = require('../Model/tutor');
+
+
 
 
 // ---------- Student Signup Route ---------- //
@@ -85,6 +90,108 @@ Router.get("/allstudents", async (req, res) => {
     }
 });
 
+Router.post("/addtowishlist/:courseId", auth, async (req, res) => {
+    try {
+        
+        const courseToWishlist = await Course.findById({_id: req.params.courseId});
 
+        const student = await Student.findById({ _id: req.user.id });
+
+        student.wishlist.push(courseToWishlist._id);
+        courseToWishlist.wishlistedBy.push(req.user.id);
+
+        await student.save();
+        await courseToWishlist.save();
+
+        res.status(200).send({message: "Added the course to wishlist", wishListed: courseToWishlist});
+
+    } catch (error) {
+        console.log("Error while adding to wishlist", error);
+        res.status(500).send({ message: "Couldn't add the item to wishlist", error: error.message });
+    }
+});
+
+Router.delete("/removefromwishlist/:courseId", auth, async (req, res) => {
+    try {
+
+        const removeFromWishlist = await Course.findById({ _id: req.params.courseId });
+
+        const student = await Student.findById({ _id: req.user.id });
+
+        const indexOfCourse = student.wishlist.indexOf(removeFromWishlist._id);
+        if (indexOfCourse > -1) {
+            student.wishlist.splice(indexOfCourse, 1);
+            await student.save();
+        };
+
+        const indexOfStudent = removeFromWishlist.wishlistedBy.indexOf(req.user.id);
+        if (indexOfStudent > -1){
+            removeFromWishlist.wishlistedBy.splice(indexOfStudent, 1);
+            await removeFromWishlist.save();
+        };
+
+        res.status(200).send({ message: "Course removed from wishlist", removedItem: removeFromWishlist})
+
+    } catch (error) {
+        console.log("Error while removing to wishlist", error);
+        res.status(500).send({ message: "Couldn't remove the item to wishlist", error: error.message });
+    }
+});
+
+Router.post("/addtocart/:courseId", auth, async (req, res) => {
+    try {
+        
+        const courseToAdd = await Course.findById({_id: req.params.courseId});
+        const student = await Student.findById({_id: req.user.id});
+
+        student.cart.push(courseToAdd._id);
+        await student.save();
+
+        res.status(200).send({message: "Added the course to cart", cart: student.cart});
+
+    } catch (error) {
+        console.log("Error while adding item to cart", error);
+        res.status(500).send({ message: "Couldn't adding the item to cart", error: error.message });
+    }
+});
+
+Router.patch("/removefromcart/:courseId", auth, (req, res) => {
+    try {
+
+        const courseToRemove = await Course.findById({ _id: req.params.courseId });
+        const student = await Student.findById({ _id: req.user.id });
+
+        const indexOfCourse = student.cart.indexOf(courseToRemove._id);
+        if (indexOfCourse > -1) {
+            student.cart.splice(indexOfCourse, 1);
+            await student.save();
+        };
+
+
+    } catch (error) {
+        console.log("Error while removing item from cart", error);
+        res.status(500).send({ message: "Couldn't removing the item from cart", error: error.message });
+    }
+});
+
+Route.post("/latestcourse/:courseId", auth, (req, res) => {
+    try {
+        
+        const lastViewedCourse = await Course.findById({_id: req.params.courseId});
+
+        const student = await Student.findById({ _id: req.user.id });
+
+        student.lastViewedCourse.push(lastViewedCourse._id);
+
+        await student.save();
+
+        res.status(200).send({ message: "Updated the recently viewed course", lastViewedCourse});
+
+    } catch (error) {
+        
+        console.log("Error while adding item to last viewed", error);
+        res.status(500).send({ message: "Couldn't updated the last viwed course", error: error.message });
+    }
+});
 
 module.exports = Router;

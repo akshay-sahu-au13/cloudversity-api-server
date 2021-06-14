@@ -59,8 +59,8 @@ const StudentSchema = mongoose.Schema({
         ref: "course",
         default: null
     },
-    lastViewed: {
-        type: mongoose.Schema.Types.ObjectId,
+    lastViewedCourse: {
+        type: [mongoose.Schema.Types.ObjectId],
         ref: "course",
         
     },
