@@ -68,7 +68,7 @@ Router.post("/addcourse", auth, imageUpload.single("thumbnail"), async (req, res
     } catch (error) {
         console.log("Error while creating course: ", error);
 
-        res.status(400).send({ message: "Couldn't create the course", error: error.message });
+        res.status.send({ message: "Couldn't create the course", error: error.message });
     }
 
 });
