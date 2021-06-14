@@ -42,6 +42,7 @@ Router.post("/addcourse", auth, imageUpload.single("thumbnail"), async (req, res
     try {
 
         console.log("User details provided during AUTH: ", req.user);
+        res.header("Access-Control-Allow-Origin", "true");
 
         const course_data = new Course({
             ...req.body
