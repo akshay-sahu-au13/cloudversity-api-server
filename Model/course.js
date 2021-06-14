@@ -33,7 +33,7 @@ const courseSchema = new mongoose.Schema ({
     },
     discount: {
         type: Number,
-        defualt: 0
+        default: 0
     },
     total_subscriptions: {
         type: Number,
