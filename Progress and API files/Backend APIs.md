@@ -11,6 +11,9 @@
 **Get all students** ==> GET: "/stu/allstudents"
 **Add to wishlist** ==> POST: "/addtowishlist/:courseId"
 **Remove from wishlist** ==> DELETE: "/removefromwishlist/:courseId"
+**Add to cart** ==> POST: "/addtocart/:courseId"
+**Remove from cart** ==> PATCH: "/removefromcart/:courseId"
+**Latest viewed course** ==> POST: "/latestcourse/:courseId"
 
 ## Tutor
 
