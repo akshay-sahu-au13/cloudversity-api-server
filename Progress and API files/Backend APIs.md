@@ -8,11 +8,13 @@
 
 **Student Login** ==> POST: "/stu/login"
 **Student Signup** ==> POST: "/stu/signup"
+**Get all students** ==> GET: "/stu/allstudents"
 
 ## Tutor
 
 **Tutor Login** ==> POST: "/tut/login"
 **Tutot Signup** ==> POST: "/tut/signup"
+**Get all tutors** ==> GET: "/tut/alltutors"
 
 ## Course
 

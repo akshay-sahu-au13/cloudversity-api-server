@@ -2,7 +2,6 @@ const express = require('express');
 const Router = express.Router();
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
-
 const bcrypt = require('bcryptjs');
 const Tutor = require('../Model/tutor');
 
