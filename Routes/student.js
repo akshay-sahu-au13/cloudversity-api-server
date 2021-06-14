@@ -155,7 +155,7 @@ Router.post("/addtocart/:courseId", auth, async (req, res) => {
     }
 });
 
-Router.patch("/removefromcart/:courseId", auth, (req, res) => {
+Router.patch("/removefromcart/:courseId", auth, async(req, res) => {
     try {
 
         const courseToRemove = await Course.findById({ _id: req.params.courseId });
@@ -174,7 +174,7 @@ Router.patch("/removefromcart/:courseId", auth, (req, res) => {
     }
 });
 
-Route.post("/latestcourse/:courseId", auth, (req, res) => {
+Router.post("/latestcourse/:courseId", auth, async(req, res) => {
     try {
         
         const lastViewedCourse = await Course.findById({_id: req.params.courseId});
