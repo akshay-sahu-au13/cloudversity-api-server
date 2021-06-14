@@ -162,7 +162,7 @@ Router.patch("/updatethumbnail/:courseId", auth, imageUpload.single('thumbnail')
 Router.post("/uploadvideo/:courseId", auth, videoUpload.single("videoLink"), async (req, res) => {
 
     try {
-        // console.log("Course Id: ", req.params.courseId, "User: ", req.user)
+
         const video = new Video({
             ...req.body
         });

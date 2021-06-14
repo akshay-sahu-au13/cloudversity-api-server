@@ -93,3 +93,4 @@ Dependencies to install: axios, jwt-decode
 - Changed the logic for calculating rating as the previous one was incorrect
 - Added CORS related middleware to eliminate cross origin errors
 - Modified the addcourse route to enable thumbnail uploading
+- Added logic to calculate the course duration based on number of videos
