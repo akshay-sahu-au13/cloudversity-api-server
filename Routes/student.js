@@ -69,6 +69,22 @@ Router.post('/login', async (req, res) => {
     }
 });
 
+Router.get("/allstudents", async (req, res) => {
+    try {
+        const students = await Student.find();
+        if (!students) {
+            return res.send("No students found");
+        }
+        res.status(200).send({ 
+            message:"Student list fetched successfully",
+            data: students,
+        });
+    } catch (err) { 
+        console.log("Error while fetching the student list", error);
+        res.status(500).send({message: "Couldn't fetch the list of students", error: error.message});
+    }
+});
+
 
 
 module.exports = Router;

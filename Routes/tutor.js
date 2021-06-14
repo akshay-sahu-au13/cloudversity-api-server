@@ -74,5 +74,22 @@ Router.post('/login', async (req, res) => {
     }
 });
 
+Router.get("/alltutors", async (req, res) => {
+    try {
+        const tutors = await Tutor.find();
+        if (!tutors) {
+            return res.send("No tutors found");
+        }
+        res.status(200).send({
+            message: "Tutor list fetched successfully",
+            data: tutors,
+        });
+        
+    } catch (err) {
+        console.log("Error while fetching the tutors list", error);
+        res.status(500).send({ message: "Couldn't fetch the list of tutors", error: error.message });
+    }
+});
+
 
 module.exports = Router;

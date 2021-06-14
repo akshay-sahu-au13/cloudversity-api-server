@@ -53,6 +53,21 @@ const StudentSchema = mongoose.Schema({
         type: [mongoose.Schema.Types.ObjectId],
         ref: "review",
         default: null
+    },
+    wishlist : {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "course",
+        default: null
+    },
+    lastViewed: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "course",
+        
+    },
+    cart: {
+        type: [mongoose.Schema.Types.ObjectId],
+        ref: "course",
+        default: null
     }
 
 }, { timestamps: true });
