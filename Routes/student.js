@@ -156,7 +156,7 @@ Router.post("/addtocart/:courseId", auth, async (req, res) => {
         const courseToAdd = await Course.findById({_id: req.params.courseId});
         const student = await Student.findById({_id: req.user.id});
 
-        if (student.cart.includes(courseToAdd._id)){
+        if (!student.cart.includes(courseToAdd._id)){
 
             student.cart.push(courseToAdd._id);
             await student.save();
