@@ -79,6 +79,7 @@ Router.get("/course/:courseId", async (req, res) => {
             .populate("reviews", ["reviewBody", "rating"])
             .populate("videos", ["videoLink", "title", "publicId"])
             .populate("authorName", ["firstName", "lastName"])
+            .populate("wishlistedBy")
             .exec();
 
         res.status(200).send({ requestedCourse });

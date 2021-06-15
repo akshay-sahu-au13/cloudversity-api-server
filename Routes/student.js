@@ -45,7 +45,13 @@ Router.post('/login', async (req, res) => {
 
         // const loginData = req.body;
 
-        const student = await Student.findOne({ email: req.body.email });
+        const student = await Student.findOne({ email: req.body.email })
+        .populate("wishlist")
+        .populate("enrolledCourses")
+        .populate("lastViewedCourse", ["courseName", "authorName"])
+        .populate("cart")
+        .populate("yourReviews").exec();
+
         console.log("Student obj from student Login: ", student);
 
         if (!student) {
@@ -150,10 +156,15 @@ Router.post("/addtocart/:courseId", auth, async (req, res) => {
         const courseToAdd = await Course.findById({_id: req.params.courseId});
         const student = await Student.findById({_id: req.user.id});
 
-        student.cart.push(courseToAdd._id);
-        await student.save();
+        if (student.cart.includes(courseToAdd._id)){
 
-        res.status(200).send({message: "Added the course to cart", cart: student.cart});
+            student.cart.push(courseToAdd._id);
+            await student.save();
+            res.status(200).send({message: "Added the course to cart", cart: student.cart});
+        } else {
+            res.status(200).send({message: "Item already added to cart"});
+        }
+
 
     } catch (error) {
         console.log("Error while adding item to cart", error);
