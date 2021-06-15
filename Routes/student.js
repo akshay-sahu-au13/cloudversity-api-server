@@ -6,7 +6,6 @@ const bcrypt = require('bcryptjs');
 const auth = require("../Auth/auth");
 const Student = require('../Model/student');
 const Course = require('../Model/course');
-const Tutor = require('../Model/tutor');
 
 
 // ----------------- POST: Student Signup Route ------------------ //
@@ -35,7 +34,7 @@ Router.post('/signup', async (req, res) => {
 
         console.log("Error: ", error);
         res.send({ message: "Error while signing up", error: error.message });
-    }
+    };
 });
 
 // ------------------ POST: Student Login Route ------------------- //
@@ -56,26 +55,26 @@ Router.post('/login', async (req, res) => {
 
         if (!student) {
             return res.send({ message: "This email is not registered with us, please signup first!", error: "Email not registered" });
-        }
+        };
 
         // --- Validatig password using bcryptjs --- /
         const isValidPassword = await bcrypt.compare(req.body.password, student.password);
 
         if (!isValidPassword) {
             return res.status(400).send({ message: "Invalid Password", error: "Invalid Password" });
-        }
+        };
 
-        // --- Generating token and saving it in cookie --- /
+        // --- Generating JWT --- /
         const token = await jwt.sign({ id: student._id, email: student.email }, process.env.JWT_SECRET, { expiresIn: "6h" });
-        res.cookie('token', token, { httpOnly: true, maxAge: 1000000 });
+        // res.cookie('token', token, { httpOnly: true, maxAge: 1000000 });   // not saving the token in cookie now
 
-        res.status(200).send({ message: "Student successfully logged in", data: student, token })
+        res.status(200).send({ message: "Student successfully logged in", data: student, token });
 
     } catch (error) {
 
         console.log("Error during Login ==> ", error);
         res.send({ message: "Error during Login", error: error.message });
-    }
+    };
 });
 
 // ----------------- GET: Route to get list of all the students ------------------- //
@@ -84,7 +83,7 @@ Router.get("/allstudents", async (req, res) => {
         const students = await Student.find();
         if (!students) {
             return res.send("No students found");
-        }
+        };
         res.status(200).send({ 
             message:"Student list fetched successfully",
             data: students,
@@ -92,7 +91,7 @@ Router.get("/allstudents", async (req, res) => {
     } catch (err) { 
         console.log("Error while fetching the student list", error);
         res.status(500).send({message: "Couldn't fetch the list of students", error: error.message});
-    }
+    };
 });
 
 // ----------------- POST: Route to Add a course to Wishlist ------------------- //
@@ -112,13 +111,13 @@ Router.post("/addtowishlist/:courseId", auth, async (req, res) => {
             res.status(200).send({ message: "Added the course to wishlist", wishListed: courseToWishlist });
         } else {
             res.status(200).send({message: "Course already added to wishlist"});
-        }
+        };
 
 
     } catch (error) {
         console.log("Error while adding to wishlist", error);
         res.status(500).send({ message: "Couldn't add the item to wishlist", error: error.message });
-    }
+    };
 });
 
 // ----------------- DELETE: Route to remove a course from Wishlist ------------------- //
@@ -133,20 +132,25 @@ Router.delete("/removefromwishlist/:courseId", auth, async (req, res) => {
         if (indexOfCourse > -1) {
             student.wishlist.splice(indexOfCourse, 1);
             await student.save();
+        } else {
+            res.status(200).send({ message: "Course not found in wishlist", removedItem: removeFromWishlist });
+
         };
 
         const indexOfStudent = removeFromWishlist.wishlistedBy.indexOf(req.user.id);
         if (indexOfStudent > -1){
             removeFromWishlist.wishlistedBy.splice(indexOfStudent, 1);
             await removeFromWishlist.save();
+        } else {
+            res.status(200).send({ message: "Student has not wishlisted this course", removedItem: removeFromWishlist });
         };
 
-        res.status(200).send({ message: "Course removed from wishlist", removedItem: removeFromWishlist})
+        res.status(200).send({ message: "Course removed from wishlist", removedItem: removeFromWishlist});
 
     } catch (error) {
         console.log("Error while removing to wishlist", error);
         res.status(500).send({ message: "Couldn't remove the item to wishlist", error: error.message });
-    }
+    };
 });
 
 // ----------------- POST: Route to add a course to the Cart ------------------- //
@@ -169,7 +173,7 @@ Router.post("/addtocart/:courseId", auth, async (req, res) => {
     } catch (error) {
         console.log("Error while adding item to cart", error);
         res.status(500).send({ message: "Couldn't adding the item to cart", error: error.message });
-    }
+    };
 });
 
 // ----------------- PATCH: Route to remove a course from Cart ------------------- //
@@ -194,7 +198,7 @@ Router.patch("/removefromcart/:courseId", auth, async(req, res) => {
     } catch (error) {
         console.log("Error while removing item from cart", error);
         res.status(500).send({ message: "Couldn't removing the item from cart", error: error.message });
-    }
+    };
 });
 
 // ----------------- POST: Route to update the last visited course ------------------- //
@@ -220,7 +224,7 @@ Router.post("/latestcourse/:courseId", auth, async(req, res) => {
         
         console.log("Error while adding item to last viewed", error);
         res.status(500).send({ message: "Couldn't updated the last viwed course", error: error.message });
-    }
+    };
 });
 
 module.exports = Router;

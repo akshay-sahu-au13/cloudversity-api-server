@@ -19,7 +19,7 @@ Router.patch("/updateprofile/:id", auth, async (req, res) => {
 
         if (student) {
             student.profileInfo = {...req.body} ;
-            await student.save()
+            await student.save();
         } else {
             tutor.profileInfo = {...req.body};
             await tutor.save();
@@ -30,7 +30,7 @@ Router.patch("/updateprofile/:id", auth, async (req, res) => {
     } catch (error) {
         console.log("Error while updating profile", error);
         res.status(500).send({message: "Error in updating profile", error:error.message});
-    }
+    };
 });
 
 // ------------------- PATCH: Route to update the dp ------------------- //
@@ -45,7 +45,7 @@ Router.patch("/updatedp/:id", auth, imageUpload.single("profileImg"), async (req
 
         if (student) {
             student.profileImg = uploadedImage.secure_url;
-            await student.save()
+            await student.save();
         } else {
             tutor.profileImg = uploadedImage.secure_url;
             await tutor.save();
@@ -56,7 +56,7 @@ Router.patch("/updatedp/:id", auth, imageUpload.single("profileImg"), async (req
     } catch (error) {
         console.log("Error while updating profile Image", error);
         res.status(500).send({ message: "Error in updating profile Image", error: error.message });
-    }
+    };
 });
 
 module.exports = Router;

@@ -33,7 +33,7 @@ Router.post('/signup', async (req, res) => {
 
         console.log("Error: ", error);
         res.send({ message: "Error while signing up", error: error.message });
-    }
+    };
 });
 
 // ---------- Tutor Login Route ---------- //
@@ -64,13 +64,13 @@ Router.post('/login', async (req, res) => {
         // console.log("Token from Teacher Login Route ==> ", token);
         // console.log("Cookie from Teacher Login Route ==> ", req.cookies);
 
-        res.status(200).send({ message: "Tutor successfully logged in", data: tutor, token })
+        res.status(200).send({ message: "Tutor successfully logged in", data: tutor, token });
 
     } catch (error) {
 
         console.log("Error during Login ==> ", error);
         res.send({ message: "Error during Login", error: error.message });
-    }
+    };
 });
 
 Router.get("/alltutors", async (req, res) => {
@@ -87,7 +87,7 @@ Router.get("/alltutors", async (req, res) => {
     } catch (err) {
         console.log("Error while fetching the tutors list", error);
         res.status(500).send({ message: "Couldn't fetch the list of tutors", error: error.message });
-    }
+    };
 });
 
 

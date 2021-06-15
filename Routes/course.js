@@ -5,8 +5,6 @@ const Course = require("../Model/course");
 const Video = require("../Model/video");
 const Tutor = require("../Model/tutor");
 const Student = require("../Model/student");
-const path = require("path");
-const multer = require("multer");
 const bufferConversion = require("../Utils/bufferConversion");
 const { imageUpload, videoUpload } = require("../Utils/multer");
 const { cloudinary } = require("../Utils/clodinary");
@@ -47,7 +45,7 @@ Router.post("/addcourse", auth, async (req, res) => {
         console.log("Error while creating course: ", error);
 
         res.send({ message: "Couldn't create the course", error: error.message });
-    }
+    };
 
 });
 
@@ -67,7 +65,7 @@ Router.get("/allcourses", async (req, res) => {
 
         console.log("Error: ", error);
         res.status(400).send({ message: "Error while fetching", error: error.message });
-    }
+    };
 });
 
 
@@ -87,7 +85,7 @@ Router.get("/course/:courseId", async (req, res) => {
     } catch (error) {
         console.log("Error occurred while fetching the course...", error);
         res.status(500).send({ message: "Couldn't fetch the course", error: error.message });
-    }
+    };
 });
 
 // ------------------- POST: Enroll to Course ---------------//
@@ -111,7 +109,7 @@ Router.post("/enroll/:courseId", auth, async (req, res) => {
     } catch (error) {
         console.log("Error occurred while enrolling...", error);
         res.status(500).send({ message: "Couldn't enroll to the course", error: error.message });
-    }
+    };
 
 });
 
@@ -127,13 +125,13 @@ Router.patch("/updatecourse/:courseId", auth, async (req, res) => {
             $set: updatedDetails
         });
 
-        res.status(200).send({ message: "Course details updated successfully!", updatedDetails })
+        res.status(200).send({ message: "Course details updated successfully!", updatedDetails });
 
 
     } catch (error) {
         console.log("Error occurred while updating...", error);
         res.status(500).send({ message: "Couldn't update the course", error: error.message });
-    }
+    };
 });
 
 
@@ -157,7 +155,7 @@ Router.patch("/updatethumbnail/:courseId", auth, imageUpload.single('thumbnail')
     } catch (error) {
         console.log("Error occurred while updating thumbnail...", error);
         res.status(500).send({ message: "Couldn't update the thumbnail", error: error.message });
-    }
+    };
 });
 
 // ------------------- POST: Upload Videos ---------------//
@@ -206,14 +204,14 @@ Router.post("/uploadvideo/:courseId", auth, videoUpload.single("videoLink"), asy
         course.videos.push(video._id);
         await course.save();
 
-        res.status(201).send({ message: "Video uploaded successfully", videoDetails: video })
+        res.status(201).send({ message: "Video uploaded successfully", videoDetails: video });
 
     } catch (error) {
 
         console.log("Error occurred while uploading...", error);
         res.status(500).send({ message: "Couldn't upload the video", error: error.message });
 
-    }
+    };
 });
 
 // ------------------- DELETE: Route to Delete a Video ------------------- //
@@ -231,7 +229,7 @@ Router.delete("/deletevideo/:videoId", auth, async (req, res) => {
     } catch (error) {
         console.log("Error occurred while deleting the video...", error);
         res.status(500).send({ message: "Couldn't delete the video, try again", error: error.message });
-    }
+    };
 });
 
 module.exports = Router;
