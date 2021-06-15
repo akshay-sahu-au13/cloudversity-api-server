@@ -183,8 +183,13 @@ Router.patch("/removefromcart/:courseId", auth, async(req, res) => {
         if (indexOfCourse > -1) {
             student.cart.splice(indexOfCourse, 1);
             await student.save();
+            res.status(200).send({ message: "Course removed from cart" });
+        } else {
+            res.status(200).send({ message: "Course not present in cart" });
         };
 
+
+        
 
     } catch (error) {
         console.log("Error while removing item from cart", error);
