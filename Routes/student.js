@@ -107,8 +107,8 @@ Router.post("/addtowishlist/:courseId", auth, async (req, res) => {
             courseToWishlist.wishlistedBy.push(req.user.id);
             await student.save();
             await courseToWishlist.save();
-
-            res.status(200).send({ message: "Added the course to wishlist", wishListed: courseToWishlist });
+            console.log("Student", student);
+            res.status(200).send({ message: "Added the course to wishlist", wishListed: courseToWishlist,student });
         } else {
             res.status(200).send({message: "Course already added to wishlist"});
         };

@@ -159,19 +159,19 @@ Router.patch("/updatethumbnail/:courseId", auth, imageUpload.single('thumbnail')
 });
 
 // ------------------- POST: Upload Videos ---------------//
-Router.post("/uploadvideo/:courseId", auth, videoUpload.single("videoLink"), async (req, res) => {
+Router.post("/uploadvideo/:courseId", auth, async (req, res) => {
 
     try {
 
         const video = new Video({
-            ...req.body
+            title: req.body.title
         });
 
-        const convertedBuffer = await bufferConversion(req.file.originalname, req.file.buffer);
+        // const convertedBuffer = await bufferConversion(req.file.originalname, req.file.buffer);
         // console.log("req.file.buffer: ",req.file.buffer);
         // console.log("convertedBuffer: ", convertedBuffer);  Don't ever uncomment this :-P
 
-        const uploadedVideo = await cloudinary.uploader.upload(convertedBuffer, { resource_type: "video", upload_preset: "cloudversity-dev", });
+        const uploadedVideo = await cloudinary.uploader.upload(req.body.videoLink, { resource_type: "video", upload_preset: "cloudversity-dev", });
 
         console.log("Uploaded video object: ", uploadedVideo)
         video.courseId = req.params.courseId;
@@ -229,6 +229,21 @@ Router.delete("/deletevideo/:videoId", auth, async (req, res) => {
     } catch (error) {
         console.log("Error occurred while deleting the video...", error);
         res.status(500).send({ message: "Couldn't delete the video, try again", error: error.message });
+    };
+});
+
+Router.patch("/applydiscount/:courseId", auth, async(req, res) => {
+    try {
+        
+        const course  = await Course.findById({_id: req.params.courseId});
+        course.discount = req.body.discount;
+        await course.save();
+
+        res.status(200).send({message: `${req.body.discount}% discount applied on course`, course});
+        
+    } catch (error) {
+        console.log("Error occurred while applying discount...", error);
+        res.status(500).send({ message: "Couldn't apply discount, try again", error: error.message });
     };
 });
 
