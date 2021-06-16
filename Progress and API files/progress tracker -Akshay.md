@@ -94,3 +94,26 @@ Dependencies to install: axios, jwt-decode
 - Added CORS related middleware to eliminate cross origin errors
 - Modified the addcourse route to enable thumbnail uploading
 - Added logic to calculate the course duration based on number of videos
+
+## Features and modifications (15th June):
+
+- Added logic to calculate the course duration based on number of videos
+- Populated wishlistedBy in allcourse and courseby courseId
+- Poulated wishlist in student routes
+- Populated reviews, cart and latestcourse
+- Modified the logic addtocart and addtowishlist routes
+- Modified logic for removing itme from cart
+- Modified the NewCourse page in front end
+-
+
+## Features and modifications (16th June):
+
+- Added a route to apply discount on course
+- Added Popular, Highest rated and students are viewing section in UI
+- Modified the upload video function and form in front end
+- Modified the upload video route in backend
+- Pushed the changes to heroku
+- Added a deleteVideo function in serverRequests \*\*
+- Added Add video button in courseDetails page \*\*
+- Made a new components named VideoUploadModal \*\*
+- Added a delete icon

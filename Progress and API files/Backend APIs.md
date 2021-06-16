@@ -31,6 +31,7 @@
 **To Update a course** ==> PATCH: "/updatecourse/:courseId"
 **To update thumbnail** ==> PATCH: "/updatethumbnail/:courseId"
 **To delete a video** ==> DELETE: "/deletevideo/:videoId"
+**to apply discount** ==> PATCH: "/applydiscount/:courseId"
 
 ## Reviews
 
