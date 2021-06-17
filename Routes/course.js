@@ -88,6 +88,18 @@ Router.get("/course/:courseId", async (req, res) => {
     };
 });
 
+// ------------------- DELETE: Delete a particular Course ---------------//
+Router.delete("/deletecourse", auth, (req, res) => {
+    try {
+        
+
+
+    } catch (error) {
+        console.log("Error occurred while deleting the course...", error);
+        res.status(500).send({ message: "Couldn't delete the course", error: error.message });
+    };
+});
+
 // ------------------- POST: Enroll to Course ---------------//
 Router.post("/enroll/:courseId", auth, async (req, res) => {
 
@@ -95,13 +107,19 @@ Router.post("/enroll/:courseId", auth, async (req, res) => {
 
         const course = await Course.findById({ _id: req.params.courseId });
         const student = await Student.findById({ _id: req.user.id });
+        const tutor = await Tutor.findById({ _id: course.authorName});
 
         if (!course.enrolledStudents.includes(req.user.id)) {
 
-            course.enrolledStudents.push(req.user.id);
-            student.enrolledCourses.push(req.params.courseId);
+            course.enrolledStudents.push(req.user.id);                 // updating the enrolled list of course
+            student.enrolledCourses.push(req.params.courseId);         // updating the enrolled list of student
+            dicountedPrice = (course.price * course.discount) / 100;   // applying discount on the course
+            tutor.totalEarnings += dicountedPrice.toFixed(2);          // updating total earnings of the tutor
+            
             await course.save();
             await student.save();
+            await tutor.save();      
+
             res.status(200).send({ message: "New course enrolled successfully", enrolledCourses: student.enrolledCourses });
         }
         res.status(200).send({message: "Student already enrolled to this course"});
@@ -167,29 +185,19 @@ Router.post("/uploadvideo/:courseId", auth, async (req, res) => {
             title: req.body.title
         });
 
-        // const convertedBuffer = await bufferConversion(req.file.originalname, req.file.buffer);
-        // console.log("req.file.buffer: ",req.file.buffer);
-        // console.log("convertedBuffer: ", convertedBuffer);  Don't ever uncomment this :-P
-
         const uploadedVideo = await cloudinary.uploader.upload(req.body.videoLink, { resource_type: "video", upload_preset: "cloudversity-dev", });
 
         console.log("Uploaded video object: ", uploadedVideo)
         video.courseId = req.params.courseId;
         video.authorId = req.user.id;
 
-        // if (uploadedVideo.duration > 60) {
-        //     videoLength = (uploadedVideo.duration / 60).toFixed(2);
-        // } else {
-        //     videoLength = uploadedVideo.duration
-        // };
-
-        videoLength = (uploadedVideo.duration / 60).toFixed(3);
+        videoLength = (uploadedVideo.duration / 60).toFixed(3);    // converting videoLength to minutes
 
         console.log("Video Length : ", videoLength);
 
         video.videoLength = videoLength;
         video.videoLink = uploadedVideo.secure_url;
-        video.publicId = uploadedVideo.public_id.split("/")[1];   // NEW: added public Id to video Schema
+        video.publicId = uploadedVideo.public_id.split("/")[1];   // adding public Id to video Schema
 
         await video.save();
 
@@ -219,19 +227,27 @@ Router.delete("/deletevideo/:videoId", auth, async (req, res) => {
     try {
         
         const videoToDelete = await Video.findById({_id: req.params.videoId});
-
+        const course = Course.findById({ _id: videoToDelete.courseId});
         const deletedVideo = await cloudinary.uploader.destroy(videoToDelete.publicId, { resource_type: 'video', upload_preset: "cloudversity-dev"});
 
-        const deleteVideo = await Video.findOneAndDelete({_id: req.params.videoId});
+        await Video.findOneAndDelete({_id: req.params.videoId});
+       
+        const indexOfVideo = course.videos.indexOf(req.params.videoId);
 
-        res.status(200).send({message: "Sucess! The video has been deleted"});
-
+        if (indexOfVideo > -1) {
+            course.videos.splice(indexOfVideo, 1);           // removing video from the videos list of course
+            res.status(200).send({ message: "Sucess! The video has been deleted" });            
+        } else {
+            res.status(200).send({ message: "Video not present in course's video list" });
+        };
+        
     } catch (error) {
         console.log("Error occurred while deleting the video...", error);
         res.status(500).send({ message: "Couldn't delete the video, try again", error: error.message });
     };
 });
 
+// ------------------- PATCH: Apply discount on a Course ---------------//
 Router.patch("/applydiscount/:courseId", auth, async(req, res) => {
     try {
         

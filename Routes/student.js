@@ -192,9 +192,6 @@ Router.patch("/removefromcart/:courseId", auth, async(req, res) => {
             res.status(200).send({ message: "Course not present in cart" });
         };
 
-
-        
-
     } catch (error) {
         console.log("Error while removing item from cart", error);
         res.status(500).send({ message: "Couldn't removing the item from cart", error: error.message });
