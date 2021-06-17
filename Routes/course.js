@@ -74,7 +74,7 @@ Router.get("/course/:courseId", async (req, res) => {
     try {
 
         const requestedCourse = await Course.findById({ _id: req.params.courseId })
-            .populate("reviews", ["reviewBody", "rating"])
+            .populate("reviews", ["reviewerId", "reviewBody", "rating"])
             .populate("videos", ["videoLink", "title", "publicId", "videoLength"])
             .populate("authorName", ["firstName", "lastName"])
             .populate("wishlistedBy")
