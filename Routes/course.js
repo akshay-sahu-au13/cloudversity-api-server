@@ -231,12 +231,12 @@ Router.delete("/deletevideo/:videoId", auth, async (req, res) => {
         if (videoToDelete.publicId){
             await cloudinary.uploader.destroy(videoToDelete.publicId, { resource_type: 'video', upload_preset: "cloudversity-dev" });
         };
-        await Video.findOneAndDelete({_id: req.params.videoId});
        
         const indexOfVideo = course.videos.indexOf(req.params.videoId);
 
         if (indexOfVideo > -1) {
             course.videos.splice(indexOfVideo, 1);           // removing video from the videos list of course
+            await Video.findOneAndDelete({ _id: req.params.videoId });
             res.status(200).send({ message: "Sucess! The video has been deleted" });            
         } else {
             res.status(200).send({ message: "Video not present in course's video list" });
