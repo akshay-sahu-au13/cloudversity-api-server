@@ -187,7 +187,7 @@ Router.post("/uploadvideo/:courseId", auth, async (req, res) => {
 
         const uploadedVideo = await cloudinary.uploader.upload(req.body.videoLink, { resource_type: "video", upload_preset: "cloudversity-dev", });
 
-        console.log("Uploaded video object: ", uploadedVideo)
+        console.log("Uploaded video object: ", uploadedVideo);
         video.courseId = req.params.courseId;
         video.authorId = req.user.id;
 

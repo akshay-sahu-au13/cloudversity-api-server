@@ -43,7 +43,7 @@ Router.post('/login', async (req, res) => {
 
         // const loginData = req.body;
 
-        const tutor = await Tutor.findOne({ email: req.body.email });
+        const tutor = await Tutor.findOne({ email: req.body.email }).populate("createdCourses");
         console.log("Tutor obj from tutor Login: ", tutor);
 
         if (!tutor) {
