@@ -227,13 +227,15 @@ Router.delete("/deletevideo/:videoId", auth, async (req, res) => {
     try {
         
         const videoToDelete = await Video.findById({_id: req.params.videoId});
-        const course = Course.findById({ _id: videoToDelete.courseId});
+        const course = await Course.findById({ _id: videoToDelete.courseId});
         if (videoToDelete.publicId){
             await cloudinary.uploader.destroy(videoToDelete.publicId, { resource_type: 'video', upload_preset: "cloudversity-dev" });
         };
-       
+        console.log("course: ", course);
+        console.log("course videos: ", course.videos);
         const indexOfVideo = course.videos.indexOf(req.params.videoId);
-
+        // console.log("course: ",course);
+        // console.log("course videos: ", course.videos);
         if (indexOfVideo > -1) {
             course.videos.splice(indexOfVideo, 1);           // removing video from the videos list of course
             await Video.findOneAndDelete({ _id: req.params.videoId });
