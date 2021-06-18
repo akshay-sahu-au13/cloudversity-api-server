@@ -100,7 +100,7 @@ Router.delete("/deletecourse/:courseId", auth, async(req, res) => {
             };
         };
 
-        await findOneAndDelete({_id: course._id});
+        await Course.findOneAndDelete({_id: course._id});
 
         res.status(200).send({message: "Course and it's content deleted successfully", DeletedCOurse: course});
 
