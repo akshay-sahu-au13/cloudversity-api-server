@@ -92,7 +92,7 @@ Router.get("/course/:courseId", async (req, res) => {
 // ------------------- DELETE: Delete a particular Course ---------------//
 Router.delete("/deletecourse/:courseId", auth, async(req, res) => {
     try {
-        const course = await Course.findById({_id: req.params.courseId}).populate("videos", [publicId]);
+        const course = await Course.findById({_id: req.params.courseId}).populate("videos", ["publicId"]);
 
         for(let i = 0; i< course.videos.length; i++) {
             if (course.videos[i].publicId){
