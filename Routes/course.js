@@ -104,7 +104,6 @@ Router.delete("/deletecourse/:courseId", auth, async(req, res) => {
 
         res.status(200).send({message: "Course and it's content deleted successfully", DeletedCOurse: course});
 
-
     } catch (error) {
         console.log("Error occurred while deleting the course...", error);
         res.status(500).send({ message: "Couldn't delete the course", error: error.message });
