@@ -102,7 +102,7 @@ Router.delete("/deletecourse/:courseId", auth, async(req, res) => {
 
         await Course.findOneAndDelete({_id: course._id});
 
-        res.status(200).send({message: "Course and it's content deleted successfully", DeletedCOurse: course});
+        res.status(200).send({message: "Course and its content deleted successfully", DeletedCOurse: course});
 
     } catch (error) {
         console.log("Error occurred while deleting the course...", error);
