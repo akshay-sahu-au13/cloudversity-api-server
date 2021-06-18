@@ -8,6 +8,7 @@ const Student = require("../Model/student");
 const bufferConversion = require("../Utils/bufferConversion");
 const { imageUpload, videoUpload } = require("../Utils/multer");
 const { cloudinary } = require("../Utils/clodinary");
+const { findOneAndDelete } = require("../Model/tutor");
 
 
 //-------------- COURSE AND VIDEO ROUTES BELOW ---------------- //
@@ -54,7 +55,7 @@ Router.get("/allcourses", async (req, res) => {
     try {
         const courseData = await Course.find()
             .populate("videos", ["videoLink", "title", "videoLength", "publicId"])
-            .populate("reviews", ["reviewBody", "rating"])
+            .populate("reviews", ["reviewerName","reviewBody", "rating"])
             .populate("authorName", ["firstName", "lastName", "createdCourses"])
             .populate("wishlistedBy")   // chaining populate to get multiple fields populated
             .exec();
@@ -74,7 +75,7 @@ Router.get("/course/:courseId", async (req, res) => {
     try {
 
         const requestedCourse = await Course.findById({ _id: req.params.courseId })
-            .populate("reviews", ["reviewerId", "reviewBody", "rating"])
+            .populate("reviews", ["reviewerId", "reviewerName","reviewBody", "rating"])
             .populate("videos", ["videoLink", "title", "publicId", "videoLength"])
             .populate("authorName", ["firstName", "lastName"])
             .populate("wishlistedBy")
@@ -89,9 +90,19 @@ Router.get("/course/:courseId", async (req, res) => {
 });
 
 // ------------------- DELETE: Delete a particular Course ---------------//
-Router.delete("/deletecourse", auth, (req, res) => {
+Router.delete("/deletecourse/:courseId", auth, async(req, res) => {
     try {
-        
+        const course = await Course.findById({_id: req.params.courseId}).populate("videos", [publicId]);
+
+        for(let i = 0; i< course.videos.length; i++) {
+            if (course.videos[i].publicId){
+                await cloudinary.uploader.destroy(course.videos[i].publicId, { resource_type: 'video', upload_preset: "cloudversity-dev" });
+            };
+        };
+
+        await findOneAndDelete({_id: course._id});
+
+        res.status(200).send({message: "Course and it's content deleted successfully", DeletedCOurse: course});
 
 
     } catch (error) {
