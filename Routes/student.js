@@ -80,7 +80,7 @@ Router.post('/login', async (req, res) => {
 // ----------------- GET: Route to get list of all the students ------------------- //
 Router.get("/allstudents", async (req, res) => {
     try {
-        const students = await Student.find();
+        const students = await Student.find().populate();
         if (!students) {
             return res.send("No students found");
         };
@@ -93,6 +93,22 @@ Router.get("/allstudents", async (req, res) => {
         res.status(500).send({message: "Couldn't fetch the list of students", error: error.message});
     };
 });
+
+Router.get("/:studentId", async(req, res) => {
+    try {
+        const studentInfo = await Student.findById({_id: req.params.studentId})
+        .populate([{path:"wishlist", select:["courseName", "thumbnail", "price", "rating"], populate:{path:"authorName", model:"tutor", select:["firstName", "lastName"]}}])
+            .populate([{ path: "cart", select: ["courseName", "thumbnail", "price", "rating"], populate: { path: "authorName", model: "tutor", select: ["firstName", "lastName"] } }]).exec();
+
+        console.log("Student Info: ", studentInfo)
+
+        res.status(200).send({ message: "Fetched Student details: ", studentInfo});
+
+    } catch (error) {
+        console.log("Error while fetching the student info", error);
+        res.status(500).send({ message: "Couldn't fetch the info of student", error: error.message });
+    };
+} );
 
 // ----------------- POST: Route to Add a course to Wishlist ------------------- //
 Router.post("/addtowishlist/:courseId", auth, async (req, res) => {

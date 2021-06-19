@@ -148,7 +148,7 @@ Router.patch("/updatecourse/:courseId", auth, async (req, res) => {
 
         const updatedDetails = {
             ...req.body
-        }
+        };
 
         const uploadedImage = await cloudinary.uploader.upload(req.body.thumbnail, { upload_preset: "cloudversity-dev", });
         updatedDetails.thumbnail = uploadedImage.secure_url;
