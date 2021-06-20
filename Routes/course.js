@@ -8,6 +8,7 @@ const Tutor = require("../Model/tutor");
 const Student = require("../Model/student");
 const bufferConversion = require("../Utils/bufferConversion");
 const { imageUpload, videoUpload } = require("../Utils/multer");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { cloudinary } = require("../Utils/clodinary");
 const { findOneAndDelete } = require("../Model/tutor");
 
@@ -144,15 +145,15 @@ Router.post("/enroll/:courseId", auth, async (req, res) => {
 
 // ------------------- POST: Payment route ---------------//
 
-Router.post("/payment", auth, async(req, res) => {
+Router.post("/payment", async(req, res) => {
     try {
         
         console.log(process.env.STRIPE_SECRET_KEY);   // remove it later
-        const { product, token } = req.body;
-        console.log("PRODUCT: ", product);
-        console.log("PRICE: ", product.price);
+        const { token, ...item } = req.body;
+        console.log("PRODUCT: ", item);
+        console.log("PRICE: ", item.price);
         console.log("TOKEN: ", token);
-        const idempontencyKey = uuidv4(); // to make sure we don't charge the user twice accidently or due to any error
+        
 
         return stripe.customers.create({
             email: token.email,
@@ -160,11 +161,11 @@ Router.post("/payment", auth, async(req, res) => {
         }).then(customer => {
             stripe.charges.create({
 
-                amount: product.price * 100,
+                amount: item.price * 100,
                 currency: "inr",
                 customer: customer.id,
                 receipt_email: token.email,
-                description: `purchase of ${product.name}`,
+                description: `purchase of ${item.courseName}`,
                 shipping: {
                     name: token.card.name,
                     address: {
@@ -173,7 +174,7 @@ Router.post("/payment", auth, async(req, res) => {
                     }
                 }
             });
-        }).then(result => res.status(200).send(result))
+        }).then(result => res.status(200).send({message: "Payment was successful", result}))
             .catch(err => console.log(err));
 
 
