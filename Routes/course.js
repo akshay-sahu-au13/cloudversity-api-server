@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const Router = express.Router();
 const auth = require("../Auth/auth");
 const Course = require("../Model/course");
@@ -140,6 +141,49 @@ Router.post("/enroll/:courseId", auth, async (req, res) => {
     };
 
 });
+
+// ------------------- POST: Payment route ---------------//
+
+Router.post("/payment", auth, async(req, res) => {
+    try {
+        
+        console.log(process.env.STRIPE_SECRET_KEY);   // remove it later
+        const { product, token } = req.body;
+        console.log("PRODUCT: ", product);
+        console.log("PRICE: ", product.price);
+        console.log("TOKEN: ", token);
+        const idempontencyKey = uuidv4(); // to make sure we don't charge the user twice accidently or due to any error
+
+        return stripe.customers.create({
+            email: token.email,
+            source: token.id,
+        }).then(customer => {
+            stripe.charges.create({
+
+                amount: product.price * 100,
+                currency: "inr",
+                customer: customer.id,
+                receipt_email: token.email,
+                description: `purchase of ${product.name}`,
+                shipping: {
+                    name: token.card.name,
+                    address: {
+                        line1: token.card.address_line1,
+                        country: token.card.address_country
+                    }
+                }
+            });
+        }).then(result => res.status(200).send(result))
+            .catch(err => console.log(err));
+
+
+
+    } catch (error) {
+        console.log("Error occurred during transaction...", error);
+        res.status(500).send({ message: "Paymeent failed, please try again", error: error.message });
+    }
+});
+
 
 // ------------------- PATCH: Course details Update ---------------//
 Router.patch("/updatecourse/:courseId", auth, async (req, res) => {
