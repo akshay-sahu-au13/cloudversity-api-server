@@ -98,7 +98,8 @@ Router.get("/:studentId", async(req, res) => {
     try {
         const studentInfo = await Student.findById({_id: req.params.studentId})
         .populate([{path:"wishlist", select:["courseName", "thumbnail", "price", "rating"], populate:{path:"authorName", model:"tutor", select:["firstName", "lastName"]}}])
-            .populate([{ path: "cart", select: ["courseName", "thumbnail", "price", "rating"], populate: { path: "authorName", model: "tutor", select: ["firstName", "lastName"] } }]).exec();
+        .populate([{ path: "cart", select: ["courseName", "thumbnail", "price", "rating"], populate: { path: "authorName", model: "tutor", select: ["firstName", "lastName"] } }])
+            .populate("enrolledCourses").exec();
 
         console.log("Student Info: ", studentInfo)
 
