@@ -129,3 +129,29 @@ Dependencies to install: axios, jwt-decode
 - Modified review routes
 - Modified review schema
 - Added review section in course Details
+
+## Features and modifications (18th June):
+
+- Added deletecourse route and added logic to delete the video from cloudinary
+- Updated the API endpoint files and progess tacker
+- Created a post review section
+- Created a new post review function in courseDetails and Serverrequests
+- Added Rating section as well
+
+## Features and modifications (19th June):
+
+- Made a Cartitem component (components) and Cart page(pages) \*\*
+- Changed updatecourse route to re-upload the image in cloudinary
+- Made new route to get student by id \*\*
+- Modified the fetchCartFromDB fn in serverRequest.js \*\*
+- Rendering the dynamic data in cart page \*\*
+
+## Features and modifications (20th June):
+
+- Added stripe Publishable key to .env file
+- Tried a stripe integration and tested it
+- Made a new payment route in backend
+- Added enroll course fn in Cart page
+- Added Delete from cart function in Cart page
+- Modified the addtocart route to check if user has already enrolled to the course
+- Modified the addtowishlist route to check if user has already enrolled to the course

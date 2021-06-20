@@ -118,7 +118,7 @@ Router.post("/addtowishlist/:courseId", auth, async (req, res) => {
 
         const student = await Student.findById({ _id: req.user.id });
 
-        if (!student.wishlist.includes(courseToWishlist._id)) {
+        if (!student.wishlist.includes(courseToWishlist._id) && !student.enrolledCourses.includes(courseToWishlist._id)) {
             student.wishlist.push(courseToWishlist._id);
             courseToWishlist.wishlistedBy.push(req.user.id);
             await student.save();
@@ -126,7 +126,7 @@ Router.post("/addtowishlist/:courseId", auth, async (req, res) => {
             console.log("Student", student);
             res.status(200).send({ message: "Added the course to wishlist", wishListed: courseToWishlist,student });
         } else {
-            res.status(200).send({message: "Course already added to wishlist"});
+            res.status(200).send({message: "You've either Enrolled to this course or Course is already added to the wishlist"});
         };
 
 
