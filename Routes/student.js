@@ -2,10 +2,7 @@ const express = require('express');
 const Router = express.Router();
 const auth = require("../Auth/auth");
 
-
 const { signUp, login, getAllStudents, getSingleStudent, addToWishlist, removeFromWishlist, addToCart, removeFromCart, getLatestCourse } = require('../Controllers/studenControllers');
-
-
 
 // ----------------- POST: Student Signup Route ------------------ //
 Router.post('/signup', signUp);

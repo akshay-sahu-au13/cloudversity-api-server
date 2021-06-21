@@ -38,8 +38,6 @@ module.exports = {
     login: async (req, res) => {
         try {
 
-            // const loginData = req.body;
-
             const student = await Student.findOne({ email: req.body.email })
                 .populate("wishlist")
                 .populate("enrolledCourses")
