@@ -10,44 +10,12 @@ const { imageUpload, videoUpload } = require("../Utils/multer");
 const { cloudinary } = require("../Utils/clodinary");
 
 
+const { addCourse } = require("../Controllers/courseControllers");
+
 //-------------- COURSE AND VIDEO ROUTES BELOW ---------------- //
 
 // ------------------- POST: Add a New Course ------------------//
-Router.post("/addcourse", auth, async (req, res) => {
-
-    try {
-
-        console.log("User details provided during AUTH: ", req.user);
- 
-        const course_data = new Course({
-            ...req.body
-        });
-
-        // const convertedBuffer = await bufferConversion(req.file.originalname, req.file.buffer);
-
-        const uploadedImage = await cloudinary.uploader.upload(req.body.thumbnail, { upload_preset: "cloudversity-dev", });
-
-        console.log("Cloudversity response: ", uploadedImage);
-
-        course_data.thumbnail = uploadedImage.secure_url;
-        course_data.authorName = req.user.id;
-
-        await course_data.save();
-
-        const tutor = await Tutor.findById({ _id: req.user.id });
-        tutor.createdCourses.push(course_data._id);
-
-        await tutor.save();
-
-        res.status(200).send({ message: "Congratulations...New course added!", courseData: course_data });
-
-    } catch (error) {
-        console.log("Error while creating course: ", error);
-
-        res.send({ message: "Couldn't create the course", error: error.message });
-    };
-
-});
+Router.post("/addcourse", auth, addCourse );
 
 // ------------------- GET: get All Courses ------------------//
 Router.get("/allcourses", async (req, res) => {
