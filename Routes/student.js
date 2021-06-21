@@ -80,7 +80,7 @@ Router.post('/login', async (req, res) => {
 // ----------------- GET: Route to get list of all the students ------------------- //
 Router.get("/allstudents", async (req, res) => {
     try {
-        const students = await Student.find();
+        const students = await Student.find().populate();
         if (!students) {
             return res.send("No students found");
         };
@@ -94,6 +94,23 @@ Router.get("/allstudents", async (req, res) => {
     };
 });
 
+Router.get("/:studentId", async(req, res) => {
+    try {
+        const studentInfo = await Student.findById({_id: req.params.studentId})
+        .populate([{path:"wishlist", select:["courseName", "thumbnail", "price", "rating"], populate:{path:"authorName", model:"tutor", select:["firstName", "lastName"]}}])
+        .populate([{ path: "cart", select: ["courseName", "thumbnail", "price", "rating"], populate: { path: "authorName", model: "tutor", select: ["firstName", "lastName"] } }])
+            .populate("enrolledCourses").exec();
+
+        console.log("Student Info: ", studentInfo)
+
+        res.status(200).send({ message: "Fetched Student details: ", studentInfo});
+
+    } catch (error) {
+        console.log("Error while fetching the student info", error);
+        res.status(500).send({ message: "Couldn't fetch the info of student", error: error.message });
+    };
+} );
+
 // ----------------- POST: Route to Add a course to Wishlist ------------------- //
 Router.post("/addtowishlist/:courseId", auth, async (req, res) => {
     try {
@@ -102,7 +119,7 @@ Router.post("/addtowishlist/:courseId", auth, async (req, res) => {
 
         const student = await Student.findById({ _id: req.user.id });
 
-        if (!student.wishlist.includes(courseToWishlist._id)) {
+        if (!student.wishlist.includes(courseToWishlist._id) && !student.enrolledCourses.includes(courseToWishlist._id)) {
             student.wishlist.push(courseToWishlist._id);
             courseToWishlist.wishlistedBy.push(req.user.id);
             await student.save();
@@ -110,7 +127,7 @@ Router.post("/addtowishlist/:courseId", auth, async (req, res) => {
             console.log("Student", student);
             res.status(200).send({ message: "Added the course to wishlist", wishListed: courseToWishlist,student });
         } else {
-            res.status(200).send({message: "Course already added to wishlist"});
+            res.status(200).send({message: "You've either Enrolled to this course or Course is already added to the wishlist"});
         };
 
 
@@ -160,13 +177,13 @@ Router.post("/addtocart/:courseId", auth, async (req, res) => {
         const courseToAdd = await Course.findById({_id: req.params.courseId});
         const student = await Student.findById({_id: req.user.id});
 
-        if (!student.cart.includes(courseToAdd._id)){
+        if (!student.cart.includes(courseToAdd._id) && !student.enrolledCourses.includes(courseToAdd._id)){
 
             student.cart.push(courseToAdd._id);
             await student.save();
             res.status(200).send({message: "Added the course to cart", cart: student.cart});
         } else {
-            res.status(200).send({message: "Item already added to cart"});
+            res.status(200).send({message: "You've either enrolled to this course or item is already added to cart"});
         }
 
 

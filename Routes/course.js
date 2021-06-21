@@ -1,4 +1,5 @@
 const express = require("express");
+require("dotenv").config();
 const Router = express.Router();
 const auth = require("../Auth/auth");
 const Course = require("../Model/course");
@@ -7,7 +8,9 @@ const Tutor = require("../Model/tutor");
 const Student = require("../Model/student");
 const bufferConversion = require("../Utils/bufferConversion");
 const { imageUpload, videoUpload } = require("../Utils/multer");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const { cloudinary } = require("../Utils/clodinary");
+const { findOneAndDelete } = require("../Model/tutor");
 
 
 const { addCourse } = require("../Controllers/courseControllers");
@@ -22,7 +25,7 @@ Router.get("/allcourses", async (req, res) => {
     try {
         const courseData = await Course.find()
             .populate("videos", ["videoLink", "title", "videoLength", "publicId"])
-            .populate("reviews", ["reviewBody", "rating"])
+            .populate("reviews", ["reviewerName","reviewBody", "rating"])
             .populate("authorName", ["firstName", "lastName", "createdCourses"])
             .populate("wishlistedBy")   // chaining populate to get multiple fields populated
             .exec();
@@ -42,7 +45,7 @@ Router.get("/course/:courseId", async (req, res) => {
     try {
 
         const requestedCourse = await Course.findById({ _id: req.params.courseId })
-            .populate("reviews", ["reviewBody", "rating"])
+            .populate("reviews", ["reviewerId", "reviewerName","reviewBody", "rating"])
             .populate("videos", ["videoLink", "title", "publicId", "videoLength"])
             .populate("authorName", ["firstName", "lastName"])
             .populate("wishlistedBy")
@@ -57,10 +60,19 @@ Router.get("/course/:courseId", async (req, res) => {
 });
 
 // ------------------- DELETE: Delete a particular Course ---------------//
-Router.delete("/deletecourse", auth, (req, res) => {
+Router.delete("/deletecourse/:courseId", auth, async(req, res) => {
     try {
-        
+        const course = await Course.findById({_id: req.params.courseId}).populate("videos", ["publicId"]);
 
+        for(let i = 0; i< course.videos.length; i++) {
+            if (course.videos[i].publicId){
+                await cloudinary.uploader.destroy(course.videos[i].publicId, { resource_type: 'video', upload_preset: "cloudversity-dev" });
+            };
+        };
+
+        await Course.findOneAndDelete({_id: course._id});
+
+        res.status(200).send({message: "Course and its content deleted successfully", DeletedCOurse: course});
 
     } catch (error) {
         console.log("Error occurred while deleting the course...", error);
@@ -88,7 +100,7 @@ Router.post("/enroll/:courseId", auth, async (req, res) => {
             await student.save();
             await tutor.save();      
 
-            res.status(200).send({ message: "New course enrolled successfully", enrolledCourses: student.enrolledCourses });
+            return res.status(200).send({ message: "New course enrolled successfully", enrolledCourses: student.enrolledCourses, student });
         }
         res.status(200).send({message: "Student already enrolled to this course"});
 
@@ -99,6 +111,49 @@ Router.post("/enroll/:courseId", auth, async (req, res) => {
 
 });
 
+// ------------------- POST: Payment route ---------------//
+
+Router.post("/payment", async(req, res) => {
+    try {
+        
+        console.log(process.env.STRIPE_SECRET_KEY);   // remove it later
+        const { token, ...item } = req.body;
+        console.log("PRODUCT: ", item);
+        console.log("PRICE: ", item.price);
+        console.log("TOKEN: ", token);
+        
+
+        return stripe.customers.create({
+            email: token.email,
+            source: token.id,
+        }).then(customer => {
+            stripe.charges.create({
+
+                amount: item.price * 100,
+                currency: "inr",
+                customer: customer.id,
+                receipt_email: token.email,
+                description: `purchase of ${item.courseName}`,
+                shipping: {
+                    name: token.card.name,
+                    address: {
+                        line1: token.card.address_line1,
+                        country: token.card.address_country
+                    }
+                }
+            });
+        }).then(result => res.status(200).send({message: "Payment was successful", result}))
+            .catch(err => console.log(err));
+
+
+
+    } catch (error) {
+        console.log("Error occurred during transaction...", error);
+        res.status(500).send({ message: "Paymeent failed, please try again", error: error.message });
+    }
+});
+
+
 // ------------------- PATCH: Course details Update ---------------//
 Router.patch("/updatecourse/:courseId", auth, async (req, res) => {
 
@@ -106,11 +161,17 @@ Router.patch("/updatecourse/:courseId", auth, async (req, res) => {
 
         const updatedDetails = {
             ...req.body
-        }
+        };
+
+        const uploadedImage = await cloudinary.uploader.upload(req.body.thumbnail, { upload_preset: "cloudversity-dev", });
+        updatedDetails.thumbnail = uploadedImage.secure_url;
+
+        // console.log("Cloudversity response: ", uploadedImage);
+
         const updatedCourse = await Course.findOneAndUpdate({ _id: req.params.courseId }, {
             $set: updatedDetails
         });
-
+        console.log(updatedCourse);
         res.status(200).send({ message: "Course details updated successfully!", updatedDetails });
 
 
@@ -195,15 +256,16 @@ Router.delete("/deletevideo/:videoId", auth, async (req, res) => {
     try {
         
         const videoToDelete = await Video.findById({_id: req.params.videoId});
-        const course = Course.findById({ _id: videoToDelete.courseId});
-        const deletedVideo = await cloudinary.uploader.destroy(videoToDelete.publicId, { resource_type: 'video', upload_preset: "cloudversity-dev"});
+        const course = await Course.findById({ _id: videoToDelete.courseId});
+        if (videoToDelete.publicId){
+            await cloudinary.uploader.destroy(videoToDelete.publicId, { resource_type: 'video', upload_preset: "cloudversity-dev" });
+        };
 
-        await Video.findOneAndDelete({_id: req.params.videoId});
-       
         const indexOfVideo = course.videos.indexOf(req.params.videoId);
 
         if (indexOfVideo > -1) {
             course.videos.splice(indexOfVideo, 1);           // removing video from the videos list of course
+            await Video.findOneAndDelete({ _id: req.params.videoId });
             res.status(200).send({ message: "Sucess! The video has been deleted" });            
         } else {
             res.status(200).send({ message: "Video not present in course's video list" });

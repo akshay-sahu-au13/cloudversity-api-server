@@ -20,6 +20,7 @@ Router.post("/addreview/:courseId", auth, async(req, res) => {
 
         newReview.reviewerId = req.user.id;
         newReview.courseId = req.params.courseId;
+        newReview.reviewerName = `${student.firstName} ${student.lastName}`;
 
         await newReview.save();
 

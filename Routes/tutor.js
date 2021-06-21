@@ -75,7 +75,7 @@ Router.post('/login', async (req, res) => {
 
 Router.get("/alltutors", async (req, res) => {
     try {
-        const tutors = await Tutor.find();
+        const tutors = await Tutor.find().populate("createdCourses");
         if (!tutors) {
             return res.send("No tutors found");
         }
