@@ -1,12 +1,6 @@
 const express = require("express");
 const Router = express.Router();
 const auth = require("../Auth/auth");
-const Course = require("../Model/course");
-const Video = require("../Model/video");
-const Tutor = require("../Model/tutor");
-const Student = require("../Model/student");
-const { cloudinary } = require("../Utils/clodinary");
-
 
 const { addCourse, getAllCourses, getSingleCourse, deleteCourse, enrollCourse, updateCourse, uploadVideo, deleteVideo, applyDiscount, updateThumbnail } = require("../Controllers/courseControllers");
 
@@ -17,7 +11,6 @@ Router.post("/addcourse", auth, addCourse );
 
 // ------------------- GET: get All Courses ------------------//
 Router.get("/allcourses", getAllCourses);
-
 
 // ------------------- GET: get Course by courseId -----------------//
 Router.get("/course/:courseId", getSingleCourse);
