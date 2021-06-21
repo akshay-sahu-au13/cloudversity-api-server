@@ -3,7 +3,7 @@ require('dotenv').config();
 const bcrypt = require('bcryptjs');
 const Student = require('../Model/student');
 const Course = require('../Model/course');
-
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
 module.exports = {
 

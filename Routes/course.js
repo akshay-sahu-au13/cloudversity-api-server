@@ -2,7 +2,7 @@ const express = require("express");
 const Router = express.Router();
 const auth = require("../Auth/auth");
 
-const { addCourse, getAllCourses, getSingleCourse, deleteCourse, enrollCourse, updateCourse, uploadVideo, deleteVideo, applyDiscount, updateThumbnail } = require("../Controllers/courseControllers");
+const { addCourse, getAllCourses, getSingleCourse, deleteCourse, enrollCourse, updateCourse, uploadVideo, deleteVideo, applyDiscount, updateThumbnail, coursePayment } = require("../Controllers/courseControllers");
 
 //-------------- COURSE AND VIDEO ROUTES BELOW ---------------- //
 
@@ -24,7 +24,6 @@ Router.post("/enroll/:courseId", auth, enrollCourse);
 // ------------------- PATCH: Course details Update ---------------//
 Router.patch("/updatecourse/:courseId", auth, updateCourse);
 
-
 // ------------------- PATCH: Course Thumbnail Update ---------------//
 Router.patch("/updatethumbnail/:courseId", auth, updateThumbnail);
 
@@ -36,5 +35,9 @@ Router.delete("/deletevideo/:videoId", auth, deleteVideo);
 
 // ------------------- PATCH: Apply discount on a Course ---------------//
 Router.patch("/applydiscount/:courseId", auth, applyDiscount);
+
+// ------------------- POST: Payment route ---------------//
+
+Router.post("/payment", auth, coursePayment);
 
 module.exports = Router;
