@@ -30,7 +30,7 @@
 **To Add a course video** ==> POST: "/uploadvideo/:courseId"
 **To Enroll to a course** ==> POST: "/enroll/:courseId"
 **To Update a course** ==> PATCH: "/updatecourse/:courseId"
-**To Dpdate thumbnail** ==> PATCH: "/updatethumbnail/:courseId"
+**To Update thumbnail** ==> PATCH: "/updatethumbnail/:courseId"
 **To Delete a video** ==> DELETE: "/deletevideo/:videoId"
 **to Apply discount** ==> PATCH: "/applydiscount/:courseId"
 **to Delete a course** ==> DELETE: "/deletecourse/:courseId"
