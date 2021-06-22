@@ -155,3 +155,19 @@ Dependencies to install: axios, jwt-decode
 - Added Delete from cart function in Cart page
 - Modified the addtocart route to check if user has already enrolled to the course
 - Modified the addtowishlist route to check if user has already enrolled to the course
+- Added new routes to MainContainer(wishlist and cart)
+  Packages: react-stripe-checkout for FE and stripe for BE
+
+## Features and modifications (21st June):
+
+- Modified the Home page to display the cart and wishlist items as expected
+- Modified wishlist page to add the item from wishlist to Cart
+- Moved all the route functions to Controllers folder
+
+## Features and modifications (22nd June):
+
+- Did error handling for front-end Login and Signup page(modified - Login-signup, serverrequest(userLogin, userSignup)
+- Made some changes in backend code to display the errors
+- Added Enolled tag for all the enrolled course in course card desc
+- Added Login validations from from
+- Added some content to empty cart and wishlist page
