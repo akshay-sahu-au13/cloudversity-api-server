@@ -59,7 +59,7 @@ module.exports = {
             };
 
             // --- Generating JWT --- /
-            const token = await jwt.sign({ id: student._id, email: student.email }, process.env.JWT_SECRET, { expiresIn: "30s" });
+            const token = await jwt.sign({ id: student._id, email: student.email }, process.env.JWT_SECRET, { expiresIn: "6h" });
             // res.cookie('token', token, { httpOnly: true, maxAge: 1000000 });   // not saving the token in cookie now
 
             res.status(200).send({ message: "Student successfully logged in", data: student, token });
