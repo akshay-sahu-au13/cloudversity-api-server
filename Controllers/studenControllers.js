@@ -94,7 +94,7 @@ module.exports = {
                 .populate([{ path: "cart", select: ["courseName", "thumbnail", "price", "rating"], populate: { path: "authorName", model: "tutor", select: ["firstName", "lastName"] } }])
                 .populate("enrolledCourses").exec();
 
-            console.log("Student Info: ", studentInfo)
+            // console.log("Student Info: ", studentInfo)
 
             res.status(200).send({ message: "Fetched Student details: ", studentInfo });
 

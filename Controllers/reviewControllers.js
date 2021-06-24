@@ -23,8 +23,11 @@ module.exports = {
             const averageRating = course.reviews.reduce((sum, review) => {
                 return sum + review.rating
             }, 0);
-            finalRating = (averageRating + req.body.rating) / course.reviews.length;
-
+            console.log("Average rating sum: ",averageRating);
+            console.log("Length of review: ", course.reviews.length);
+            console.log("Req.body.rating: ", (req.body.rating));
+            finalRating = (averageRating + parseInt(req.body.rating)) / course.reviews.length;
+            console.log("Final rating: ", finalRating);
             course.rating = finalRating.toFixed(2);
             student.yourReviews.push(newReview._id);
 

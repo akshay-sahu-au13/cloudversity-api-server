@@ -116,7 +116,7 @@ module.exports = {
                 await student.save();
                 await tutor.save();
 
-                res.status(200).send({ message: "New course enrolled successfully", enrolledCourses: student.enrolledCourses });
+                return res.status(200).send({ message: "New course enrolled successfully", enrolledCourses: student.enrolledCourses });
             }
             res.status(200).send({ message: "Student already enrolled to this course" });
 
