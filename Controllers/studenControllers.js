@@ -93,7 +93,7 @@ module.exports = {
                 .populate([{ path: "wishlist", select: ["courseName", "thumbnail", "price", "rating"], populate: { path: "authorName", model: "tutor", select: ["firstName", "lastName"] } }])
                 .populate([{ path: "cart", select: ["courseName", "thumbnail", "price", "rating"], populate: { path: "authorName", model: "tutor", select: ["firstName", "lastName"] } }])
                 .populate("lastViewedCourse", ["courseName", "thumbnail"])
-                .populate("enrolledCourses").exec();
+                .populate([{ path: "enrolledCourses", select: ["courseName", "thumbnail", "price", "rating"], populate: { path: "authorName", model: "tutor", select: ["firstName", "lastName"] } }]).exec();
 
             // console.log("Student Info: ", studentInfo)
 
