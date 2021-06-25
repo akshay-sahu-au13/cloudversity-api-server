@@ -92,6 +92,7 @@ module.exports = {
             const studentInfo = await Student.findById({ _id: req.params.studentId })
                 .populate([{ path: "wishlist", select: ["courseName", "thumbnail", "price", "rating"], populate: { path: "authorName", model: "tutor", select: ["firstName", "lastName"] } }])
                 .populate([{ path: "cart", select: ["courseName", "thumbnail", "price", "rating"], populate: { path: "authorName", model: "tutor", select: ["firstName", "lastName"] } }])
+                .populate("lastViewedCourse", ["courseName", "thumbnail"])
                 .populate("enrolledCourses").exec();
 
             // console.log("Student Info: ", studentInfo)
