@@ -110,7 +110,7 @@ module.exports = {
                 course.enrolledStudents.push(req.user.id);                 // updating the enrolled list of course
                 student.enrolledCourses.push(req.params.courseId);         // updating the enrolled list of student
                 dicountedPrice = course.price - (course.price * course.discount) / 100;   // applying discount on the course
-                tutor.totalEarnings += parseInt(dicountedPrice).toFixed(2);          // updating total earnings of the tutor
+                tutor.totalEarnings = parseInt(tutor.totalEarnings) + parseInt(dicountedPrice).toFixed(2);          // updating total earnings of the tutor
 
                 await course.save();
                 await student.save();
